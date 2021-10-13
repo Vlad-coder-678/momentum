@@ -4,6 +4,20 @@
 //   "checkboxSliderIsAutomatical"
 // );
 
+// сохраняем данные пользователя в localStorage
+
+function setLocalStorage() {
+  localStorage.setItem("userName", inputNameEl.value);
+}
+window.addEventListener("beforeunload", setLocalStorage); // перед перезагрузкой или закрытием страницы (событие beforeunload) данные нужно сохранить
+
+function getLocalStorage() {
+  if (localStorage.getItem("userName")) {
+    inputNameEl.value = localStorage.getItem("userName");
+  }
+}
+window.addEventListener("load", getLocalStorage);
+
 // display time
 
 function showTime() {
@@ -12,9 +26,9 @@ function showTime() {
   const currentTime = date.toLocaleTimeString(); // текущее время
   timeEl.textContent = currentTime; // вывод времени в указанное поле
   showDate(); // при изменении даты обновляем её отображение на страницы
+  showGreeting();
   setTimeout(showTime, 1000); // для обновления времени каждую секунду
 }
-
 showTime();
 
 // display date
@@ -33,6 +47,46 @@ function showDate() {
   dateEl.textContent = currentDate; // вывод времени в указанное поле
 }
 
+// greeting
+
+function showGreeting() {
+  // функция, которая будет отображать приветствие внутри указанного элемента
+  const greetingEl = document.querySelector(".greeting"); // элемент, внутри которого выводится текст приветствия
+
+  function getTimeOfDay() {
+    const TIMES_OF_DAY = {
+      MORNING: "morning",
+      DAY: "day",
+      EVENING: "evening",
+      NIGHT: "night",
+    }; // времена суток
+    const date = new Date(); // текущая дата + время
+    const hours = date.getHours(); // текущее время в часах
+    if (hours < 6) {
+      return TIMES_OF_DAY.NIGHT;
+    } else if (hours >= 6 && hours < 12) {
+      return TIMES_OF_DAY.MORNING;
+    } else if (hours >= 12 && hours < 18) {
+      return TIMES_OF_DAY.DAY;
+    } else {
+      return TIMES_OF_DAY.EVENING;
+    }
+  }
+
+  const timeOfDay = getTimeOfDay(); // Определить текущее время суток
+  const greetingText = `Good ${timeOfDay}, `; // Сгенерировать приветствие в зависимости от времени суток
+  greetingEl.textContent = greetingText; // вывод времени в указанное поле
+}
+
+// greeting
+
+const inputNameEl = document.querySelector(".inputUserName");
+inputNameEl.addEventListener("blur", setUserName);
+
+function setUserName() {
+  localStorage.setItem("userName", inputNameEl.value);
+}
+  
 // slider
 
 // const images = { morning: [], day: [], evening: [], night: [] };
