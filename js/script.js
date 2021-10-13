@@ -74,18 +74,13 @@ function showGreeting() {
   // функция, которая будет отображать приветствие внутри указанного элемента
   const greetingEl = document.querySelector(".greeting"); // элемент, внутри которого выводится текст приветствия
   const timeOfDay = getTimeOfDay(); // Определить текущее время суток
-  const greetingText = `Good ${timeOfDay}, `; // Сгенерировать приветствие в зависимости от времени суток
+  const greetingText = `Good ${timeOfDay},`; // Сгенерировать приветствие в зависимости от времени суток
   greetingEl.textContent = greetingText; // вывод времени в указанное поле
 }
 
 // greeting
 
 const inputNameEl = document.querySelector(".inputUserName");
-inputNameEl.addEventListener("blur", setUserName);
-
-function setUserName() {
-  localStorage.setItem("userName", inputNameEl.value);
-}
 
 // bg page
 
@@ -102,7 +97,12 @@ function setBg() {
   const body = document.querySelector("body"); // outer of slider
   const timeOfDay = getTimeOfDay(); // текущее время суток
   const bgNum = `${randomNum}`.padStart(2, "0");
-  body.style.backgroundImage = `url('https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfDay}/${bgNum}.jpg')`;
+  const urlImage = `https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${timeOfDay}/${bgNum}.jpg`;
+  const img = new Image();
+  img.src = urlImage;
+  img.onload = () => {
+    body.style.backgroundImage = `url(${urlImage})`;
+  };
 }
 setBg();
 
