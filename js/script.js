@@ -8,6 +8,7 @@
 
 function setLocalStorage() {
   localStorage.setItem("userName", inputNameEl.value);
+  localStorage.setItem("city", inputCity.value);
 }
 window.addEventListener("beforeunload", setLocalStorage); // перед перезагрузкой или закрытием страницы (событие beforeunload) данные нужно сохранить
 
@@ -15,6 +16,12 @@ function getLocalStorage() {
   if (localStorage.getItem("userName")) {
     inputNameEl.value = localStorage.getItem("userName");
   }
+  if (localStorage.getItem("city")) {
+    inputCity.value = localStorage.getItem("city");
+  } else {
+    inputCity.value = "Minsk";
+  }
+  getWeather();
 }
 window.addEventListener("load", getLocalStorage);
 
@@ -144,3 +151,73 @@ slideNext.addEventListener("click", getSlideNext); // отработчик на�
 //     }, 3000);
 //   }
 // });
+
+// weather api
+
+const inputCity = document.querySelector("input.city");
+
+async function getWeather() {
+  const cityName = inputCity.value;
+  const API_KEY = "14dd794d0d68a886f0e8375850edf202";
+  const LANGS = { RU: "ru", EN: "en" };
+  const UNITS = { METRIC: "metric", IMPERIAL: "imperial" };
+  const urlWeather = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&lang=${LANGS.EN}&appid=${API_KEY}&units=${UNITS.METRIC}`;
+  const res = await fetch(urlWeather);
+  if (res.status !== 200) {
+    const weatherError = document.querySelector(".weather-error");
+    weatherError.textContent = `*${res.statusText}`;
+  }
+  const data = await res.json();
+
+  const weatherIcon = document.querySelector(".weather-icon");
+  const temperature = document.querySelector(".temperature");
+  const weatherDescription = document.querySelector(".weather-description");
+  const weatherWind = document.querySelector(".wind");
+  const weatherHumidity = document.querySelector(".humidity"); // облачность
+
+  weatherIcon.className = "weather-icon owf";
+  weatherIcon.classList.add(`owf-${data.weather[0].id}`);
+  temperature.textContent = `${data.main.temp}°C`;
+  weatherDescription.textContent = data.weather[0].description;
+  weatherWind.textContent = `Wind speed: ${data.wind.speed} m/s`;
+  weatherHumidity.textContent = `Humidity: ${data.main.humidity}%`;
+}
+
+inputCity.addEventListener("change", getWeather);
+
+// quote
+
+async function getQuotes() {
+  const quoteEl = document.querySelector("quote");
+  const quoteAuthorEl = document.querySelector("author");
+
+  const quotes = "./assets/dataQuote.json";
+  const res = await fetch(quotes);
+  const data = await res.json();
+
+  let quote =
+    "Пишите код так, как будто сопровождать его будет склонный к насилию психопат, который знает, где вы живете";
+  let author = "Стив Макконнелл";
+
+  if (res.status === 200) {
+    const randomNumber = Math.floor(Math.random() * data.length);
+    randomIndexQuote = randomNumber === 0 ? 1 : randomNumber;
+    quote = data[randomIndexQuote].text;
+    author = data[randomIndexQuote].author;
+  }
+
+  quoteEl.textContent = quote;
+  quoteAuthorEl.textContent = author;
+}
+
+getQuotes();
+
+// Ещё один способ работы с асинхронными данными - fetch
+
+// function getQuotes() {
+// const quotes = 'data.json';
+// fetch(quotes)
+// .then(res => res.json())
+// .then(data => { console.log(data); });
+// }
+// getQuotes();
