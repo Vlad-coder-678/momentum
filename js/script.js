@@ -199,16 +199,18 @@ async function getQuotes() {
     "Пишите код так, как будто сопровождать его будет склонный к насилию психопат, который знает, где вы живете";
   let author = "Стив Макконнелл";
 
+  console.log(res);
+  console.log(data);
+
   if (res.status === 200) {
     const randomNumber = Math.floor(Math.random() * data.length);
     randomIndexQuote = randomNumber === 0 ? 1 : randomNumber;
     quote = data[randomIndexQuote].text;
     author = data[randomIndexQuote].author;
-    console.log(quote);
-    console.log(author);
   }
-  console.log(quoteEl);
-  console.log(quoteAuthorEl);
+
+  console.log(quote);
+  console.log(author);
 
   quoteEl.textContent = quote;
   quoteAuthorEl.textContent = author;
