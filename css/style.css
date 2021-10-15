@@ -266,6 +266,10 @@ body {
   min-height: 20px;
 }
 
+.quote-error {
+  color: orangered;
+}
+
 @media (max-width: 768px) {
   .time {
     min-height: 80px;

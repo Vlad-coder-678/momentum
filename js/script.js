@@ -188,8 +188,9 @@ inputCity.addEventListener("change", getWeather);
 // quote
 
 async function getQuotes() {
-  const quoteEl = document.querySelector("quote");
-  const quoteAuthorEl = document.querySelector("author");
+  const quoteEl = document.querySelector(".quote");
+  const quoteAuthorEl = document.querySelector(".author");
+  const quoteErrorEl = document.querySelector(".quote-error");
 
   const quotes = "./assets/dataQuote.json";
   const res = await fetch(quotes);
@@ -198,24 +199,21 @@ async function getQuotes() {
   let quote =
     "Пишите код так, как будто сопровождать его будет склонный к насилию психопат, который знает, где вы живете";
   let author = "Стив Макконнелл";
-
-  console.log("res");
-  console.log(res);
-  console.log("data");
-  console.log(data);
+  let quoteError = "";
 
   if (res.status === 200) {
     const randomNumber = Math.floor(Math.random() * data.length);
-    randomIndexQuote = randomNumber === 0 ? 1 : randomNumber;
+    randomIndexQuote = randomNumber === 3 ? 2 : randomNumber;
     quote = data[randomIndexQuote].text;
     author = data[randomIndexQuote].author;
+    quoteError = "";
+  } else {
+    quoteError = res.statusText;
   }
-
-  console.log(quote);
-  console.log(author);
 
   quoteEl.textContent = quote;
   quoteAuthorEl.textContent = author;
+  quoteErrorEl.textContent = quoteError;
 }
 
 getQuotes();
