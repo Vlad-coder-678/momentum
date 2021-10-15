@@ -204,7 +204,11 @@ async function getQuotes() {
     randomIndexQuote = randomNumber === 0 ? 1 : randomNumber;
     quote = data[randomIndexQuote].text;
     author = data[randomIndexQuote].author;
+    console.log(quote);
+    console.log(author);
   }
+  console.log(quoteEl);
+  console.log(quoteAuthorEl);
 
   quoteEl.textContent = quote;
   quoteAuthorEl.textContent = author;
