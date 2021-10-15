@@ -199,7 +199,9 @@ async function getQuotes() {
     "Пишите код так, как будто сопровождать его будет склонный к насилию психопат, который знает, где вы живете";
   let author = "Стив Макконнелл";
 
+  console.log("res");
   console.log(res);
+  console.log("data");
   console.log(data);
 
   if (res.status === 200) {
