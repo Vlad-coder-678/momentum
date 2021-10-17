@@ -1,3 +1,28 @@
+// import playlist from "./playlist.js";
+
+const playlist = [
+  {
+    title: "Aqua Caelestis",
+    src: "./assets/sounds/Aqua Caelestis.mp3",
+    duration: "00:58",
+  },
+  {
+    title: "Ennio Morricone",
+    src: "./assets/sounds/Ennio Morricone.mp3",
+    duration: "03:50",
+  },
+  {
+    title: "River Flows In You",
+    src: "./assets/sounds/River Flows In You.mp3",
+    duration: "03:50",
+  },
+  {
+    title: "Summer Wind",
+    src: "./assets/sounds/Summer Wind.mp3",
+    duration: "03:50",
+  },
+];
+
 // config
 
 // const checkboxSliderIsAutomatical = document.getElementById(
@@ -21,7 +46,7 @@ function getLocalStorage() {
   } else {
     inputCity.value = "Minsk";
   }
-  getWeather();
+  // getWeather();
 }
 window.addEventListener("load", getLocalStorage);
 
@@ -152,7 +177,7 @@ slideNext.addEventListener("click", getSlideNext); // отработчик на�
 //   }
 // });
 
-// weather api
+// weather
 
 const inputCity = document.querySelector("input.city");
 
@@ -183,7 +208,7 @@ async function getWeather() {
   weatherHumidity.textContent = `Humidity: ${data.main.humidity}%`;
 }
 
-inputCity.addEventListener("change", getWeather);
+// inputCity.addEventListener("change", getWeather);
 
 // quote
 
@@ -218,7 +243,7 @@ async function getQuotes() {
 
 getQuotes();
 
-// Ещё один способ работы с асинхронными данными - fetch
+// Ещё один способ работы с асинхронными данными - fetch (менее читабельный)
 
 // function getQuotes() {
 // const quotes = 'data.json';
@@ -227,3 +252,94 @@ getQuotes();
 // .then(data => { console.log(data); });
 // }
 // getQuotes();
+
+// audioplayer
+
+let isPlay = false;
+let playNum = 0;
+const audio = new Audio();
+audio.src = playlist[playNum].src;
+let playlistLength = playlist.length;
+
+const playButton = document.querySelector(".play");
+const prevButton = document.querySelector(".play-prev");
+const nextButton = document.querySelector(".play-next");
+const playlistContainer = document.querySelector("ul.play-list");
+const progressBar = document.querySelector(".progress-bar");
+const toggleVisiblePlaylist = document.querySelector(
+  ".toggle-visible-playlist"
+);
+
+playButton.addEventListener("click", () => {
+  if (isPlay) {
+    audioPause();
+  } else {
+    audioPlay(playNum);
+  }
+});
+prevButton.addEventListener("click", playPrev);
+nextButton.addEventListener("click", playNext);
+
+playlist.forEach((el, index) => {
+  const li = document.createElement("li");
+  li.classList.add("play-item");
+  li.addEventListener("click", () => {
+    audioPlay(index);
+  });
+  li.textContent = playlist[index].title;
+  playlistContainer.append(li);
+});
+
+function audioPlay(index) {
+  if (playButton.classList.contains("pause")) {
+    playButton.classList.remove("pause");
+  }
+  playNum = index;
+  audio.src = playlist[index].src;
+  audio.currentTime = 0;
+  audio.play();
+  playButton.classList.add("pause");
+  isPlay = true;
+  playlistContainer.childNodes.forEach((el, index) => {
+    if (el.classList.contains("item-active")) {
+      el.classList.remove("item-active");
+    }
+    if (playNum === index) {
+      el.classList.add("item-active");
+    }
+  });
+}
+
+function audioPause() {
+  audio.pause();
+  if (playButton.classList.contains("pause")) {
+    playButton.classList.remove("pause");
+  }
+  isPlay = false;
+}
+
+function playNext() {
+  if (playNum >= playlistLength - 1) {
+    playNum = 0;
+  } else {
+    playNum += 1;
+  }
+  audioPlay(playNum);
+}
+
+function playPrev() {
+  if (playNum <= 0) {
+    playNum = playlistLength - 1;
+  } else {
+    playNum -= 1;
+  }
+  audioPlay(playNum);
+}
+
+toggleVisiblePlaylist.addEventListener("click", () => {
+  if (playlistContainer.classList.contains("unvisible")) {
+    playlistContainer.classList.remove("unvisible");
+  } else {
+    playlistContainer.classList.add("unvisible");
+  }
+});
