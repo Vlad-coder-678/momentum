@@ -261,15 +261,25 @@ const audio = new Audio();
 audio.src = playlist[playNum].src;
 let playlistLength = playlist.length;
 
+// controls
 const playButton = document.querySelector(".play");
 const prevButton = document.querySelector(".play-prev");
 const nextButton = document.querySelector(".play-next");
-const playlistContainer = document.querySelector("ul.play-list");
+// current track
+const currentTrack = document.querySelector(".current-track");
 const progressBar = document.querySelector(".progress-bar");
+const currentDuration = document.querySelector(".current-duration");
+const totalDuration = document.querySelector(".total-duration");
+// volume
+const progressBarVolume = document.querySelector(".progress-bar-volume");
+const muteButton = document.querySelector(".volume");
+// playlist
+const playlistContainer = document.querySelector("ul.play-list");
 const toggleVisiblePlaylist = document.querySelector(
   ".toggle-visible-playlist"
 );
 
+// listeners
 playButton.addEventListener("click", () => {
   if (isPlay) {
     audioPause();
@@ -279,7 +289,15 @@ playButton.addEventListener("click", () => {
 });
 prevButton.addEventListener("click", playPrev);
 nextButton.addEventListener("click", playNext);
+toggleVisiblePlaylist.addEventListener("click", () => {
+  if (playlistContainer.classList.contains("unvisible")) {
+    playlistContainer.classList.remove("unvisible");
+  } else {
+    playlistContainer.classList.add("unvisible");
+  }
+});
 
+// layout
 playlist.forEach((el, index) => {
   const li = document.createElement("li");
   li.classList.add("play-item");
@@ -289,6 +307,17 @@ playlist.forEach((el, index) => {
   li.textContent = playlist[index].title;
   playlistContainer.append(li);
 });
+
+// handlers
+let currDur;
+
+function setCurrentTrack() {
+  currentTrack.textContent = playlist[playNum].title;
+  totalDuration.textContent = playlist[playNum].duration;
+  currDur = setInterval(() => {
+    currentDuration.textContent = playlist[playNum].duration;
+  }, 1000);
+}
 
 function audioPlay(index) {
   if (playButton.classList.contains("pause")) {
@@ -308,6 +337,7 @@ function audioPlay(index) {
       el.classList.add("item-active");
     }
   });
+  setCurrentTrack();
 }
 
 function audioPause() {
@@ -316,6 +346,7 @@ function audioPause() {
     playButton.classList.remove("pause");
   }
   isPlay = false;
+  currDur.clear();
 }
 
 function playNext() {
@@ -335,11 +366,3 @@ function playPrev() {
   }
   audioPlay(playNum);
 }
-
-toggleVisiblePlaylist.addEventListener("click", () => {
-  if (playlistContainer.classList.contains("unvisible")) {
-    playlistContainer.classList.remove("unvisible");
-  } else {
-    playlistContainer.classList.add("unvisible");
-  }
-});
