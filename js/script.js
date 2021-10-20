@@ -4,22 +4,22 @@ const playlist = [
   {
     title: "Aqua Caelestis",
     src: "./assets/sounds/Aqua Caelestis.mp3",
-    duration: "00:58",
+    duration: "0:39",
   },
   {
     title: "Ennio Morricone",
     src: "./assets/sounds/Ennio Morricone.mp3",
-    duration: "03:50",
+    duration: "1:37",
   },
   {
     title: "River Flows In You",
     src: "./assets/sounds/River Flows In You.mp3",
-    duration: "03:50",
+    duration: "1:37",
   },
   {
     title: "Summer Wind",
     src: "./assets/sounds/Summer Wind.mp3",
-    duration: "03:50",
+    duration: "1:50",
   },
 ];
 
@@ -85,7 +85,7 @@ function getTimeOfDay() {
   // Определить текущее время суток
   const TIMES_OF_DAY = {
     MORNING: "morning",
-    DAY: "day",
+    DAY: "afternoon",
     EVENING: "evening",
     NIGHT: "night",
   }; // времена суток
@@ -260,6 +260,8 @@ let playNum = 0;
 const audio = new Audio();
 audio.src = playlist[playNum].src;
 let playlistLength = playlist.length;
+let currDurationIntervalId;
+let progressPercent = 0;
 
 // controls
 const playButton = document.querySelector(".play");
@@ -296,27 +298,47 @@ toggleVisiblePlaylist.addEventListener("click", () => {
     playlistContainer.classList.add("unvisible");
   }
 });
-
-// layout
-playlist.forEach((el, index) => {
-  const li = document.createElement("li");
-  li.classList.add("play-item");
-  li.addEventListener("click", () => {
-    audioPlay(index);
-  });
-  li.textContent = playlist[index].title;
-  playlistContainer.append(li);
+progressBar.addEventListener("click", (e) => {
+  let { offsetWidth } = e.target;
+  let { offsetX } = e;
+  const progressPercent = Math.floor((offsetX / offsetWidth) * 100);
+  audio.currentTime = (audio.duration * progressPercent) / 100;
 });
 
-// handlers
-let currDur;
+// layout
+function setAudioPlayer() {
+  playlist.forEach((el, index) => {
+    const li = document.createElement("li");
+    li.classList.add("play-item");
+    li.addEventListener("click", () => {
+      audioPlay(index);
+    });
+    li.textContent = playlist[index].title;
+    playlistContainer.append(li);
+  });
+  currentTrack.textContent = playlist[playNum].title;
+  progressBar.style.backgroundImage = `linear-gradient(to right, #c5b358, #c5b358 ${progressPercent}%, #fff ${progressPercent}%, #fff 100%)`;
+  currentDuration.textContent = formatTime(audio.currentTime);
+  totalDuration.textContent = playlist[playNum].duration;
+}
+setAudioPlayer();
 
+// handlers
 function setCurrentTrack() {
   currentTrack.textContent = playlist[playNum].title;
-  totalDuration.textContent = playlist[playNum].duration;
-  currDur = setInterval(() => {
-    currentDuration.textContent = playlist[playNum].duration;
+  currDurationIntervalId = setInterval(() => {
+    progressPercent = Math.round((audio.currentTime / audio.duration) * 100);
+    progressBar.style.backgroundImage = `linear-gradient(to right, #c5b358, #c5b358 ${progressPercent}%, #fff ${progressPercent}%, #fff 100%)`;
+    currentDuration.textContent = formatTime(audio.currentTime);
+    totalDuration.textContent = formatTime(audio.duration);
   }, 1000);
+}
+
+function formatTime(seconds) {
+  minutes = Math.floor(seconds / 60);
+  seconds = Math.floor(seconds % 60);
+  seconds = seconds >= 10 ? seconds : `0${seconds}`;
+  return `${minutes}:${seconds}`;
 }
 
 function audioPlay(index) {
@@ -338,6 +360,7 @@ function audioPlay(index) {
     }
   });
   setCurrentTrack();
+  audio.addEventListener("ended", playNext);
 }
 
 function audioPause() {
@@ -346,10 +369,11 @@ function audioPause() {
     playButton.classList.remove("pause");
   }
   isPlay = false;
-  currDur.clear();
+  clearInterval(currDurationIntervalId);
 }
 
 function playNext() {
+  audioPause();
   if (playNum >= playlistLength - 1) {
     playNum = 0;
   } else {
@@ -359,6 +383,7 @@ function playNext() {
 }
 
 function playPrev() {
+  audioPause();
   if (playNum <= 0) {
     playNum = playlistLength - 1;
   } else {
