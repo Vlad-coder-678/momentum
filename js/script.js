@@ -259,9 +259,11 @@ let isPlay = false;
 let playNum = 0;
 const audio = new Audio();
 audio.src = playlist[playNum].src;
+audio.mute = false;
 let playlistLength = playlist.length;
 let currDurationIntervalId;
 let progressPercent = 0;
+let volumeInit = 0.2;
 
 // controls
 const playButton = document.querySelector(".play");
@@ -304,6 +306,24 @@ progressBar.addEventListener("click", (e) => {
   const progressPercent = Math.floor((offsetX / offsetWidth) * 100);
   audio.currentTime = (audio.duration * progressPercent) / 100;
 });
+progressBarVolume.addEventListener("click", (e) => {
+  const { offsetWidth } = e.target;
+  const { offsetX } = e;
+  const volumeValue = Math.floor((offsetX / offsetWidth) * 100) / 100;
+  const volumeValuePercent = Math.floor((offsetX / offsetWidth) * 100);
+  audio.volume = volumeValue;
+  progressBarVolume.style.backgroundImage = `linear-gradient(to right, #c5b358, #c5b358 ${volumeValuePercent}%, #fff ${volumeValuePercent}%, #fff 100%)`;
+});
+muteButton.addEventListener("click", () => {
+  if (muteButton.classList.contains("mute")) {
+    muteButton.classList.remove("mute");
+    muteButton.classList.add("nomute");
+  } else {
+    muteButton.classList.remove("nomute");
+    muteButton.classList.add("mute");
+  }
+  audio.muted = !audio.muted;
+});
 
 // layout
 function setAudioPlayer() {
@@ -320,6 +340,10 @@ function setAudioPlayer() {
   progressBar.style.backgroundImage = `linear-gradient(to right, #c5b358, #c5b358 ${progressPercent}%, #fff ${progressPercent}%, #fff 100%)`;
   currentDuration.textContent = formatTime(audio.currentTime);
   totalDuration.textContent = playlist[playNum].duration;
+  audio.volume = volumeInit;
+  progressBarVolume.style.backgroundImage = `linear-gradient(to right, #c5b358, #c5b358 ${
+    volumeInit * 100
+  }%, #fff ${volumeInit * 100}%, #fff 100%)`;
 }
 setAudioPlayer();
 

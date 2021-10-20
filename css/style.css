@@ -175,11 +175,11 @@ body {
   position: relative;
   width: 100px;
   height: 4px;
-  background-color: white;
+  /* background-color: white; */
   opacity: 0.8;
 }
 
-.progress-bar-volume::after {
+/* .progress-bar-volume::after {
   content: "";
   position: absolute;
   top: 0;
@@ -188,7 +188,7 @@ body {
   height: 4px;
   background-color: #c5b358;
   opacity: 0.8;
-}
+} */
 
 /* playlist */
 .toggle-visible-playlist {
