@@ -211,6 +211,8 @@ async function getWeather() {
 inputCity.addEventListener("change", getWeather);
 
 // quote
+const quoteButton = document.querySelector(".change-quote"); // button random quote
+quoteButton.addEventListener("click", getQuotes);
 
 async function getQuotes() {
   const quoteEl = document.querySelector(".quote");
