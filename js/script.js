@@ -46,7 +46,7 @@ function getLocalStorage() {
   } else {
     inputCity.value = "Minsk";
   }
-  // getWeather();
+  getWeather();
 }
 window.addEventListener("load", getLocalStorage);
 
@@ -208,7 +208,7 @@ async function getWeather() {
   weatherHumidity.textContent = `Humidity: ${data.main.humidity}%`;
 }
 
-// inputCity.addEventListener("change", getWeather);
+inputCity.addEventListener("change", getWeather);
 
 // quote
 
